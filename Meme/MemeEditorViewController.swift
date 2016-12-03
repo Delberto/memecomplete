@@ -25,19 +25,19 @@ class MemeEditorViewController: UIViewController, UINavigationControllerDelegate
     @IBOutlet weak var textFieldTop: UITextField!
     @IBOutlet weak var textFieldBottom: UITextField!
     @IBOutlet weak var actionButton: UIBarButtonItem!
-    @IBAction func cancelButton(_ sender: AnyObject) {
-        self.dismiss(animated: true, completion: nil)
+    @IBAction func cancelButton(sender: AnyObject) {
+        self.dismissViewControllerAnimated(true, completion: nil)
     }
     @IBOutlet weak var albumButton: UIBarButtonItem!
     
     
-//currentTextField var to save the current status of the textFieldTop
+//Esta variable guarda el status del campo de texto de arriba
      var currentTextField: UITextField!
      var showToolbar: UIToolbar!
      var showNavBar: UINavigationBar!
     
-//This function hides the status bar
-    override var prefersStatusBarHidden : Bool {
+//Esta función oculta la status bar
+    override func prefersStatusBarHidden() -> Bool {
         return true
     }
   
@@ -46,31 +46,31 @@ class MemeEditorViewController: UIViewController, UINavigationControllerDelegate
         
        
         let memeTextAttributes = [
-            NSStrokeColorAttributeName:UIColor.black,
-            NSForegroundColorAttributeName:UIColor.white,
+            NSStrokeColorAttributeName:UIColor.blackColor(),
+            NSForegroundColorAttributeName:UIColor.whiteColor(),
             NSFontAttributeName: UIFont(name: "HelveticaNeue-CondensedBlack", size: 40)!,
-            NSStrokeWidthAttributeName: -1.0] as [String : Any]
+            NSStrokeWidthAttributeName: -1.0]
         
-        func configTextField(_ defaultText: String, textField: UITextField){
+        func configTextField(defaultText: String, textField: UITextField){
             textField.text = defaultText
             textField.defaultTextAttributes = memeTextAttributes
-            textField.autocapitalizationType = .allCharacters
-            textField.textAlignment = .center
+            textField.autocapitalizationType = .AllCharacters
+            textField.textAlignment = .Center
             textField.delegate = self
             
         }
         configTextField("TOP", textField: textFieldTop)
         configTextField("BOTTOM", textField: textFieldBottom)
         
-         actionButton.isEnabled = false
+         actionButton.enabled = false
         
         
     }
     
  
-   override func viewWillAppear(_ animated: Bool) {
+   override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        takePhoto.isEnabled = UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.camera)
+        takePhoto.enabled = UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.Camera)
         subscribeToKeyboardNotifications()
         subscribeToKeyboardNotificationsDown()
         
@@ -78,90 +78,90 @@ class MemeEditorViewController: UIViewController, UINavigationControllerDelegate
 
     
     
-    override func viewWillDisappear(_ animated: Bool) {
+    override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         self.unsubscribeToKeyBoardNotifications()
         self.unsubscribeToKeyBoardNotificationsDown()
     }
    
-    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+    func textFieldShouldBeginEditing(textField: UITextField) -> Bool {
         currentTextField = textField
         return true
     }
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
     }
     
     
    
-       func imagePickerController(_ picker: UIImagePickerController, didFinishPickingImage image: UIImage, editingInfo: [String : AnyObject]?)
+       func imagePickerController(picker: UIImagePickerController, didFinishPickingImage image: UIImage, editingInfo: [String : AnyObject]?)
       
     {
         imagePickerView.image = image
-        self.dismiss(animated: true, completion: nil)
+        self.dismissViewControllerAnimated(true, completion: nil)
     }
   
-    func presentViewController(_ source: UIImagePickerControllerSourceType) {
+    func presentViewController(source: UIImagePickerControllerSourceType) {
         let imagePicker = UIImagePickerController()
         imagePicker.delegate = self
-        present(imagePicker, animated: true, completion: nil)
+        presentViewController(imagePicker, animated: true, completion: nil)
         imagePicker.sourceType = source
-        actionButton.isEnabled = true
+        actionButton.enabled = true
     }
     
-    @IBAction func pickAnImage(_ sender: AnyObject) {
-        presentViewController(UIImagePickerControllerSourceType.photoLibrary)
+    @IBAction func pickAnImage(sender: AnyObject) {
+        presentViewController(UIImagePickerControllerSourceType.PhotoLibrary)
     }
 
-    @IBAction func takePhoto (_ sender: AnyObject) {
-        presentViewController(UIImagePickerControllerSourceType.camera)
+    @IBAction func takePhoto (sender: AnyObject) {
+        presentViewController(UIImagePickerControllerSourceType.Camera)
     }
 
     
     func subscribeToKeyboardNotifications() {
-        NotificationCenter.default.addObserver(self, selector: #selector(MemeEditorViewController.keyboardWillShow(_:)) , name: NSNotification.Name.UIKeyboardWillShow,  object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(MemeEditorViewController.keyboardWillShow(_:)) , name: UIKeyboardWillShowNotification,  object: nil)
     }
     func unsubscribeToKeyBoardNotifications() {
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
         
     }
     
-    func keyboardWillShow(_ notification: Notification) {
-        if textFieldBottom.isFirstResponder{
+    func keyboardWillShow(notification: NSNotification) {
+        if textFieldBottom.isFirstResponder(){
         view.frame.origin.y -= getKeyboardHeight(notification)
         }
         
     }
     func subscribeToKeyboardNotificationsDown() {
-        NotificationCenter.default.addObserver(self, selector: #selector(MemeEditorViewController.keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide,  object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(MemeEditorViewController.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification,  object: nil)
     }
     
     func unsubscribeToKeyBoardNotificationsDown() {
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
     }
     
-    func keyboardWillHide(_ notification: Notification) {
-        if textFieldBottom.isFirstResponder{
+    func keyboardWillHide(notification: NSNotification) {
+        if textFieldBottom.isFirstResponder(){
         view.frame.origin.y += getKeyboardHeight(notification)
         }
         
     }
     
-    func getKeyboardHeight(_ notification:Notification) -> CGFloat {
+    func getKeyboardHeight(notification:NSNotification) -> CGFloat {
         let userInfo = notification.userInfo
         let keyboardSize = userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue
-        return keyboardSize.cgRectValue.height
+        return keyboardSize.CGRectValue().height
     }
 
-    func writeAtTheTop(_ sender: AnyObject) {
+    func writeAtTheTop(sender: AnyObject) {
         let textFieldTop = UITextField()
         textFieldTop.delegate = self
         self.view.addSubview(textFieldTop)
        
     }
     
-    func writeAtTheBottom(_ sender: AnyObject) {
+    func writeAtTheBottom(sender: AnyObject) {
         let textFieldBottom = UITextField()
         textFieldBottom.delegate = self
         self.view.addSubview(textFieldBottom)
@@ -169,47 +169,47 @@ class MemeEditorViewController: UIViewController, UINavigationControllerDelegate
     }
    
    
-//This function save the meme
-    fileprivate func save() {
+//Esta función guarda el Meme
+    private func save() {
         let memedImage = generateMemedImage()
         let meme = Meme (top: textFieldTop.text!, bottom: textFieldBottom.text!, originalImage: imagePickerView.image!, memedImage: memedImage)
-        let sharedImage = UIApplication.shared.delegate
+        let sharedImage = UIApplication.sharedApplication().delegate
         let appDelegate = sharedImage as! AppDelegate
             appDelegate.memes.append(meme)
         
-        dismiss(animated: true, completion: nil)
+        dismissViewControllerAnimated(true, completion: nil)
         
     }
-//This function generate the memedImage
+//Esta función genera el meme construido
     func generateMemedImage() -> UIImage{
-//Hide the toolbar and navigationbar
-        toolbar.isHidden = true
-        navbar.isHidden = true
+//Oculta la navBar y toolBar
+        toolbar.hidden = true
+        navbar.hidden = true
         UIGraphicsBeginImageContext(self.view.frame.size)
-        view.drawHierarchy(in: self.view.frame,
+        view.drawViewHierarchyInRect(self.view.frame,
                                      afterScreenUpdates: true)
         let memedImage : UIImage =
-            UIGraphicsGetImageFromCurrentImageContext()!
+            UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
-//Show the toolbar and the navigationbar
-         toolbar.isHidden = false
-         navbar.isHidden = false
+//Muestra toolBar y navBar 
+        toolbar.hidden = false
+         navbar.hidden = false
         
                 return memedImage
     }
     
-    @IBAction func shareButton(_ sender: AnyObject) {
+    @IBAction func shareButton(sender: AnyObject) {
         
         let controller = UIActivityViewController(activityItems: [generateMemedImage()],  applicationActivities: nil)
             controller.completionWithItemsHandler = {
             activity, succes, returnedItems, error in
             if succes{
                 self.save()
-                controller.dismiss(animated: true, completion: nil)
+                controller.dismissViewControllerAnimated(true, completion: nil)
                 
             }
         }
-        present(controller, animated: true, completion: nil)
+        presentViewController(controller, animated: true, completion: nil)
     }
 }
 
