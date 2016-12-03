@@ -169,7 +169,7 @@ class MemeEditorViewController: UIViewController, UINavigationControllerDelegate
     }
    
    
-//Esta función guarda el Meme
+//Esta función guarda el Meme después de que ha sido modificado 
     private func save() {
         let memedImage = generateMemedImage()
         let meme = Meme (top: textFieldTop.text!, bottom: textFieldBottom.text!, originalImage: imagePickerView.image!, memedImage: memedImage)
